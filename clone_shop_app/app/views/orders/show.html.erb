@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="row mt-4">
+    <div class="col-12">
+			<h3>주문 정보 확인</h3>
+			<% @order.order_items.each do |item| %>
+				<div class="card mb-3">
+					<div class="card-body">
+						<h5 class="card-title"><%= item.pack.product_name %></h5>
+						<h6 class="card-subtitle mb-2 text-muted"><%= item.pack.company_name %></h6>
+						<p class="card-text">수량 : <%= item.quantity %></p>
+						<a href="#" class="card-link">수정</a>
+						<a href="#" class="card-link">삭제</a>
+						<p class="card-text">가격 : <%= item_to_currency(item) %></p>
+					</div>
+				</div>
+			<% end %>
+    </div>
+  </div>
+
+<div class="row mt-4">
+	<div class="col-12">
+		<h3>배송정보 확인</h3>
+		<form>
+			<div class="form-group">
+				<label for="name">받는 분 성함</label>
+				<input type="text" class="form-control" id="name" name="name">
+			</div>
+			<div class="form-group">
+				<label for="phone">연락처</label>
+				<input type="text" class="form-control" id="phone" name="phone">
+			</div>
+			<div class="form-group">
+				<label for="email">이메일</label>
+				<input type="text" class="form-control" id="email" name="email">
+			</div>
+
+			<div class="form-group">
+				<label class="d-block">주소</label>
+				<a href="#" class="btn btn-outline-dark" id="search_address_btn">주소 검색</a>
+				<input type="text" id="post_code" name="post_code" class="form-control mt-2" placeholder="우편 번호">
+				<input type="text" id="address_1" name="address_1" class="form-control mt-2" placeholder="도로명 주소">
+				<input type="text" name="address_2" class="form-control mt-2" placeholder="상세 주소">
+			</div>
+		</form>
+	</div>
+</div>
+</div>
+
+
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+$("#search_address_btn").on("click", function(e){
+	e.preventDefault();
+	postCodePopup()
+})
+
+
+	function postCodePopup(){
+			new daum.Postcode({
+					oncomplete: function(data) {
+						$("#post_code").val(data.zonecode)
+						$("#address_1").val(data.roadAddress)
+						console.log(post_code.value);
+					}
+			}).open();
+		}
+</script>

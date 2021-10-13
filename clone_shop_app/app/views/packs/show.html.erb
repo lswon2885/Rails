@@ -1,0 +1,57 @@
+
+<div class="container">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Home</a></li>
+      <li class="breadcrumb-item"><a href="#">Product Detail</a></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= @pack.product_name %></li>
+    </ol>
+  </nav>
+  <div class="row mt-4">
+    <div class="col-6">
+      <% if @pack.image.attached? %>
+        <img src="<%= url_for(@pack.image) %>" class="img-fluid">
+      <% else %>
+        <img src="http://via.placeholder.com/640x360?text=No+Image" alt="" class="img-fluid">
+      <% end %>
+    </div>
+    <div class="col-6">
+      <h2><%= @pack.product_name %></h2>
+      <p><%= @pack.desc %></p>
+      <hr>
+      <h5>설명</h5>
+      <p><%= @pack.company_name %></p>
+      <hr>
+      <h3>필수 옵션 선택</h3>
+      <form action="/carts" method="POST">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <input type="hidden" name="pack_id" value="<%= @pack.id %>">
+
+        <div class="form-group">
+          <label for="quantity">수량</label>
+          <select name="quantity" id="quantity" class="form-control">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-outline-dark">장바구니 등록</button>
+      
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  <% if flash[:notice].present? %>
+  result = confirm("<%= flash[:notice] %>")
+
+  if(result){
+    location.href = "/carts"
+    
+  }
+  <% end  %>
+</script>
