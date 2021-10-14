@@ -4,6 +4,7 @@ class Order < ApplicationRecord
   has_many :order_items, dependent: :destroy
   has_many :packs, through: :order_items
 
+  has_many :payment, dependent: :nullify
   enum status: [:before_payment, :processed, :completed, :failed]
   def product_price
     result = 0
