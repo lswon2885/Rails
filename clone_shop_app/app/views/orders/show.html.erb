@@ -20,7 +20,15 @@
 <div class="row mt-4">
 	<div class="col-12">
 		<h3>배송정보 확인</h3>
-		<form>
+		<form action="/orders/<%= @order.id%>/payments" method="POST" id="payments_form"> 
+			<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+			<input type="hidden" name="imp_uid" id="imp_uid">
+			<input type="hidden" name="merchant_uid" id="merchant_uid">
+			<input type="hidden" name="paid_amount" id="paid_amount">
+			<input type="hidden" name="apply_num" id="apply_num">
+			<input type="hidden" name="error_msg" id="error_msg">
+
+	
 			<div class="form-group">
 				<label for="name">받는 분 성함</label>
 				<input type="text" class="form-control" id="name" name="name">
@@ -69,7 +77,7 @@
 	</div>
 		<div class="row">
 			<div class="col-12 mt-5">
-				<a href="#" class="btn btn-warning w-100 mt-3 mb-3">결제하기</a>
+				<a href="#" class="btn btn-warning w-100 mt-3 mb-3" id="payment_btn">결제하기</a>
 			</div>
 		</div>
 </div>
@@ -78,19 +86,61 @@
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-$("#search_address_btn").on("click", function(e){
-	e.preventDefault();
-	postCodePopup()
-})
+$(function(){
+    var IMP = window.IMP; // 생략가능
+    IMP.init('iamport'); // 'iamport' 대신 부여받은 "가맹점 식별코드"를 사용
 
+		function request_pay(){
 
-	function postCodePopup(){
-			new daum.Postcode({
-					oncomplete: function(data) {
-						$("#post_code").val(data.zonecode)
-						$("#address_1").val(data.roadAddress)
-						console.log(post_code.value);
-					}
-			}).open();
+		IMP.request_pay({
+		    pg : 'inicis', // version 1.1.0부터 지원.
+		    pay_method : 'card',
+		    merchant_uid : 'merchant_' + new Date().getTime(),
+		    name : '주문명:결제테스트',
+		    amount : <%= @order.total_price %>,
+		    buyer_email : $("#eamil").val(),
+		    buyer_name : $("#name").val(),
+		    buyer_tel : $("#phone").val(),
+		    buyer_addr : $("#address_1").val() + $("#address_2").val(),
+		    buyer_postcode : $("#post_code").val(),
+		    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
+		}, function(rsp) {
+		    if ( rsp.success ) {
+		        var msg = '결제가 완료되었습니다.';
+		        // msg += '고유ID : ' + rsp.imp_uid;
+		        // msg += '상점 거래ID : ' + rsp.merchant_uid;
+		        // msg += '결제 금액 : ' + rsp.paid_amount;
+		        // msg += '카드 승인번호 : ' + rsp.apply_num;
+			 			$("#imp_uid").val(rsp.imp_uid);
+        		$("#merchant_uid").val(rsp.merchant_uid);
+        		$("#paid_amount").val(rsp.paid_amount);
+        		$("#apply_num").val(rsp.apply_num);
+		    } else {
+		        // var msg = '결제에 실패하였습니다.';
+		        // msg += '에러내용 : ' + rsp.error_msg;
+						$("#error_msg").val(rsp.error_msg);
+		    }
+		    $("#payment_form").submit();
+		});
 		}
+
+		$("#payment_btn").on("click", function(e){
+			e.preventDefault();
+			request_pay()
+		})
+  
+    function postCodePopup(){
+      new daum.Postcode({
+        oncomplete: function(data) {
+          $("#post_code").val(data.zonecode)
+        $("#address_1").val(data.roadAddress)
+        }
+      }).open();
+    }
+  
+    $("#search_address_btn").on("click", function(e){
+      e.preventDefault();
+      postCodePopup()
+    })
+  })
 </script>
