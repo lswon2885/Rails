@@ -20,7 +20,7 @@
 <div class="row mt-4">
 	<div class="col-12">
 		<h3>배송정보 확인</h3>
-		<form action="/orders/<%= @order.id%>/payments" method="POST" id="payments_form"> 
+		<form action="/orders/<%= @order.id%>/payments" method="POST" id="payment_form"> 
 			<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 			<input type="hidden" name="imp_uid" id="imp_uid">
 			<input type="hidden" name="merchant_uid" id="merchant_uid">
