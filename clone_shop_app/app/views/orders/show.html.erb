@@ -1,146 +1,173 @@
+```html
 <div class="container">
-  <div class="row mt-4">
-    <div class="col-12">
-			<h3>주문 정보 확인</h3>
-			<% @order.order_items.each do |item| %>
-				<div class="card mb-3">
-					<div class="card-body">
-						<h5 class="card-title"><%= item.pack.product_name %></h5>
-						<h6 class="card-subtitle mb-2 text-muted"><%= item.pack.company_name %></h6>
-						<p class="card-text">수량 : <%= item.quantity %></p>
-						<a href="#" class="card-link">수정</a>
-						<a href="#" class="card-link">삭제</a>
-						<p class="card-text">가격 : <%= item_to_currency(item) %></p>
-					</div>
-				</div>
-			<% end %>
+  <div class="row">
+    <div class="col-12 mt-4">
+      <h3>주문 정보 확인</h3>
+      <% @order.order_items.each do |item| %>
+        <div class="card mt-3">
+          <div class="card-body">
+            <h5 class="card-title"><%= item.pack.product_name %></h5>
+            <h6 class="card-subtitle mb-2 text-muted"><%= item.pack.company_name %></h6>
+            <p class="card-text">수량 : <%= item.quantity %> </p>
+            <a href="#" class="card-link">수정</a>
+            <a href="#" class="card-link">삭제</a>
+            <p class="card-text">가격 : <%= number_to_currency(item.quantity * item.pack.price) %> </p>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 
-<div class="row mt-4">
-	<div class="col-12">
-		<h3>배송정보 확인</h3>
-		<form action="/orders/<%= @order.id%>/payments" method="POST" id="payment_form"> 
-			<%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-			<input type="hidden" name="imp_uid" id="imp_uid">
-			<input type="hidden" name="merchant_uid" id="merchant_uid">
-			<input type="hidden" name="paid_amount" id="paid_amount">
-			<input type="hidden" name="apply_num" id="apply_num">
-			<input type="hidden" name="error_msg" id="error_msg">
+  <div class="row mt-4">
+    <div class="col-12">
+      <h3>배송 정보 확인</h3>
+      <form action="/orders/<%= @order.id %>/payments" method="POST" id="payment_form">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <input type="hidden" name="imp_uid" id="imp_uid">
+        <input type="hidden" name="merchant_uid" id="merchant_uid">
+        
+        <div class="form-group">
+          <label for="">받는 분 성함</label>
+          <input type="text" class="form-control" id="name" name="name">
+        </div>
+        <div class="form-group">
+          <label for="">연락처</label>
+          <input type="text" class="form-control" id="phone" name="phone">
+        </div>
 
-	
-			<div class="form-group">
-				<label for="name">받는 분 성함</label>
-				<input type="text" class="form-control" id="name" name="name">
-			</div>
-			<div class="form-group">
-				<label for="phone">연락처</label>
-				<input type="text" class="form-control" id="phone" name="phone">
-			</div>
-			<div class="form-group">
-				<label for="email">이메일</label>
-				<input type="text" class="form-control" id="email" name="email">
-			</div>
+				<div class="form-group">
+          <label for="">이메일</label>
+          <input type="text" class="form-control" id="email" name="email">
+        </div>
 
-			<div class="form-group">
-				<label class="d-block">주소</label>
-				<a href="#" class="btn btn-outline-dark" id="search_address_btn">주소 검색</a>
-				<input type="text" id="post_code" name="post_code" class="form-control mt-2" placeholder="우편 번호">
-				<input type="text" id="address_1" name="address_1" class="form-control mt-2" placeholder="도로명 주소">
-				<input type="text" name="address_2" class="form-control mt-2" placeholder="상세 주소">
-			</div>
-		</form>
-	</div>
-</div>
-	<div class="row">
-		<div class="col-12 mt-5">
-		<h3>주문상세</h3>
-			<div class="card">
+				<div class="form-group">
+          <label for="" class="d-block">주소</label>
+					<a href="#" class="btn btn-outline-dark" id="search_address_btn">주소 검색</a>
+          <input type="text" class="form-control mt-3" id="post_code" name="post_code" placeholder="우편 번호">
+					<input type="text" class="form-control mt-3" id="address_1" name="address_1" placeholder="도로명주소">
+					<input type="text" class="form-control mt-3" id="address_2" name="address_2" placeholder="상세 주소">
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <h3>결제 정보</h3>
+      <div class="card">
         <div class="card-body">
           <div class="d-flex justify-content-between">
-            <h5 class="card-title">주문금액 합계</h5>
+            <h5 class="card-title">주문 금액 합계</h5>
             <p class="card-text"><%= number_to_currency(@order.product_price) %></p>
           </div>
-          <div class="d-flex justify-content-between mt-4">
+          <div class="d-flex justify-content-between mt-3">
             <h5 class="card-title">배송비</h5>
             <p class="card-text"><%= number_to_currency(@order.shipping_fee) %></p>
           </div>
         </div>
         <div class="card-footer">
-          <div class="d-flex justify-content-between">
-            <h5 class="card-title">최종 결제금액</h5>
+          <div class="d-flex justify-content-between mt-3">
+            <h5 class="card-title">최종 결제 금액</h5>
             <p class="card-text"><%= number_to_currency(@order.total_price) %></p>
           </div>
         </div>
       </div>
-		</div>
-	</div>
-		<div class="row">
-			<div class="col-12 mt-5">
-				<a href="#" class="btn btn-warning w-100 mt-3 mb-3" id="payment_btn">결제하기</a>
-			</div>
-		</div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <a href="#" class="btn btn-warning w-100 my-5 shadow" id="payment_btn">결제하기</a>
+    </div>
+  </div>
 </div>
 
-
-
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-$(function(){
+  $(function(){
     var IMP = window.IMP; // 생략가능
     IMP.init('iamport'); // 'iamport' 대신 부여받은 "가맹점 식별코드"를 사용
 
-		function request_pay(){
-
-		IMP.request_pay({
-		    pg : 'inicis', // version 1.1.0부터 지원.
-		    pay_method : 'card',
-		    merchant_uid : 'merchant_' + new Date().getTime(),
-		    name : '주문명:결제테스트',
-		    amount : <%= @order.total_price %>,
-		    buyer_email : $("#eamil").val(),
-		    buyer_name : $("#name").val(),
-		    buyer_tel : $("#phone").val(),
-		    buyer_addr : $("#address_1").val() + $("#address_2").val(),
-		    buyer_postcode : $("#post_code").val(),
-		    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
-		}, function(rsp) {
-		    if ( rsp.success ) {
-		        var msg = '결제가 완료되었습니다.';
-		        // msg += '고유ID : ' + rsp.imp_uid;
-		        // msg += '상점 거래ID : ' + rsp.merchant_uid;
-		        // msg += '결제 금액 : ' + rsp.paid_amount;
-		        // msg += '카드 승인번호 : ' + rsp.apply_num;
-			 			$("#imp_uid").val(rsp.imp_uid);
-        		$("#merchant_uid").val(rsp.merchant_uid);
-        		$("#paid_amount").val(rsp.paid_amount);
-        		$("#apply_num").val(rsp.apply_num);
-		    } else {
-		        // var msg = '결제에 실패하였습니다.';
-		        // msg += '에러내용 : ' + rsp.error_msg;
-						$("#error_msg").val(rsp.error_msg);
-		    }
-		    $("#payment_form").submit();
-		});
-		}
-
-		$("#payment_btn").on("click", function(e){
-			e.preventDefault();
-			request_pay()
-		})
-  
-    function postCodePopup(){
-      new daum.Postcode({
-        oncomplete: function(data) {
-          $("#post_code").val(data.zonecode)
-        $("#address_1").val(data.roadAddress)
-        }
-      }).open();
+    function request_pay(){
+      IMP.request_pay({
+          pg : 'inicis', // version 1.1.0부터 지원.
+          pay_method : 'card',
+          merchant_uid : 'merchant_' + new Date().getTime(),
+          name : '주문명:결제테스트',
+          amount : <%= Rails.env.development? ? 100 : @order.total_price %>,
+          buyer_email : $("#email").val(),
+          buyer_name : $("#name").val(),
+          buyer_tel : $("#phone").val(),
+          buyer_addr : $("#address_1").val() + $("#address_2").val(),
+          buyer_postcode : $("#post_code").val(),
+          m_redirect_url : 'https://www.yourdomain.com/payments/complete'
+      }, function(rsp) {
+          $("#imp_uid").val(rsp.imp_uid)
+          $("#merchant_uid").val(rsp.merchant_uid)
+          $("#payment_form").submit();
+      });
     }
+
+    function check_form(){
+      is_name = $("#name").val() == ""
+      is_phone = $("#phone").val() == ""
+      is_email = $("#email").val() == ""
+      is_post_code = $("#post_code").val() == ""
+      is_address_1 = $("#address_1").val() == ""
+      is_address_2 = $("#address_2").val() == ""
+
+      msg = ""
+      if(is_name){
+        msg += "이름을 입력해주세요.\n"
+      }
+
+      if(is_phone){
+        msg += "연락처를 입력해주세요.\n"
+      }
+
+      if(is_email){
+        msg += "이메일을 입력해주세요.\n"
+      }
+
+      if(is_post_code || is_address_1){
+        msg += "주소를 검색해주세요.\n"
+      }
+
+      if(is_address_2){
+        msg += "상세 주소를 입력해주세요.\n"
+      }
+
+      return {
+        status: msg == "",
+        msg: msg
+      }
+    }
+    
+    $("#payment_btn").on("click", function(e){
+      e.preventDefault();
+      checked_data = check_form();
+      if(checked_data.status){
+        request_pay();
+      }else{
+        alert(checked_data.msg);
+      }
+    })
+
   
     $("#search_address_btn").on("click", function(e){
       e.preventDefault();
-      postCodePopup()
+      postCodePopup();
     })
+  
+    function postCodePopup(){
+      new daum.Postcode({
+          oncomplete: function(data) {
+            $("#post_code").val(data.zonecode)
+            $("#address_1").val(data.roadAddress)
+          }
+      }).open();
+    }
   })
+    
 </script>
+```

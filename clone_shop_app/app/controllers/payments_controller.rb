@@ -1,23 +1,33 @@
+
 class PaymentsController < ApplicationController
   def create
     order = Order.find(params[:order_id])
 
-    if params[:imp_uid].present?
-      response = Iamport.payment(params[:imp_uid])
+    iamport = Iamport.payment(params[:imp_uid])
+    response = iamport["response"]
+
+    if response["status"] == "paid"
+      order.update(
+        address: response["buyer_addr"],
+        email: response["buyer_email"],
+        name: response["buyer_name"],
+        phone: response["buyer_tel"],
+        post_code: response["buyer_postcode"]
+      )
 
       Payment.create(
         order: order,
         response: response,
-        imp_uid: response["response"]["imp_uid"],
-        merchant_uid: response["response"]["merchant_uid"],
-        amount: response["response"]["amount"]
+        imp_uid: response["imp_uid"],
+        merchant_uid: response["merchant_uid"],
+        amount: response["amount"]
       )
 
       order.processed!
 
       flash[:notice] = "성공적으로 결제되었습니다!"
-    else
-      error_msg = params[:error_msg]
+    elsif response["status"] == "failed"
+      error_msg = response["fail_reason"]
 
       order.failed!
 
