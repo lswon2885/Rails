@@ -1,4 +1,3 @@
-```html
 <div class="container">
   <div class="row">
     <div class="col-12 mt-4">
@@ -102,9 +101,21 @@
           buyer_postcode : $("#post_code").val(),
           m_redirect_url : 'https://www.yourdomain.com/payments/complete'
       }, function(rsp) {
-          $("#imp_uid").val(rsp.imp_uid)
-          $("#merchant_uid").val(rsp.merchant_uid)
-          $("#payment_form").submit();
+          // $("#imp_uid").val(rsp.imp_uid)
+          // $("#merchant_uid").val(rsp.merchant_uid)
+          // $("#payment_form").submit();
+
+data = {
+  imp_uid: rsp.imp_uid,
+  merchant_uid: rsp.merchant_uid
+}
+
+Rails.ajax({
+  type: "POST",
+  url: "/orders/<%= @order.id %>/payments",
+  data: new URLSearchParams(data)
+})
+
       });
     }
 
@@ -170,4 +181,3 @@
   })
     
 </script>
-```

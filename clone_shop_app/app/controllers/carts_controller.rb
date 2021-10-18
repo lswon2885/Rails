@@ -21,14 +21,30 @@ class CartsController < ApplicationController
   end
 
   def create
-    cart = Cart.new(pack_id: params[:pack_id], user: current_user, quantity: params[:quantity])
-  
+    cart = Cart.new(
+      pack_id: params[:pack_id], 
+      user: current_user,
+      quantity: params[:quantity],
+    )
+    sample_carts = current_user.carts
+
+    #기존에 내가 같은 제품 등록했는지 찾기
+    remain_cart = sample_carts.find_by(pack_id: cart.pack_id)
+
+    if remain_cart.present?
+      sum_quantity = remain_cart.quantity + cart.quantity.to_i
+
+      remain_cart.update(quantity: sum_quantity)
+    else
+      cart.save
+    end
    
-     cart.verified_save
      
-    flash[:notice] = "장바구니에 상품이 담겼습니다.장바구니로 이동하시겠습니까?"
+    @notice = "장바구니에 상품이 담겼습니다.장바구니로 이동하시겠습니까?"
   
-    redirect_back(fallback_location: root_path)
+    respond_to do |format|
+      format.js
+    end
   end
 
 

@@ -14,7 +14,7 @@ class PaymentsController < ApplicationController
         phone: response["buyer_tel"],
         post_code: response["buyer_postcode"]
       )
-
+    
       Payment.create(
         order: order,
         response: response,
@@ -22,18 +22,21 @@ class PaymentsController < ApplicationController
         merchant_uid: response["merchant_uid"],
         amount: response["amount"]
       )
-
+    
       order.processed!
-
-      flash[:notice] = "성공적으로 결제되었습니다!"
+    
+      @notice = "성공적으로 결제되었습니다!"
     elsif response["status"] == "failed"
       error_msg = response["fail_reason"]
-
+    
       order.failed!
-
-      flash[:notice] = error_msg
+    
+      @notice = error_msg
     end
-
-    redirect_to "/orders"
+    
+    # redirect_to "/orders"
+    respond_to do |format|
+      format.js
+    end
   end
 end

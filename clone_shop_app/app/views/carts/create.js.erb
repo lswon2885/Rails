@@ -1,0 +1,8 @@
+  <% if @notice.present? %>
+  result = confirm("<%= @notice %>")
+
+  if(result){
+    location.href = "/carts"
+    
+  }
+  <% end  %>
