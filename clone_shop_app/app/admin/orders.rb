@@ -11,6 +11,39 @@ ActiveAdmin.register Order do
   filter :post_code
   filter :address
   filter :email
+  filter :user_email_cont, label: "사용자 이메일로 검색"
+  filter :packs_product_name_cont, label: "팩의 이름으로 검색"
+
+  
+  batch_action "cancelled", form: {
+    cancel_reason: :text
+  } do |ids, inputs|
+    @orders = Order.where(id: ids)
+    
+    @orders.each do |order|
+      iamport = Iamport.payment(params[:imp_uid])
+  
+      body = {
+        imp_uid: order.payment.imp_uid,
+        merchant_uid: order.payment.merchant_uid,
+        amount: order.payment.amount,
+      }
+      
+      result = Iamport.cancel(body)
+  
+      if result["response"]["status"] == "cancelled"
+        order.update(
+          cancel_reason: inputs[:cancel_reason],
+          status: :canceled
+        )
+        flash[:notice] = "성공적으로 환불되었습니다!"
+      end
+    end
+  
+    redirect_to collection_path
+  end
+  
+
 
   index do
     selectable_column
