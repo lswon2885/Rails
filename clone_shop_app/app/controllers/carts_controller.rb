@@ -47,7 +47,7 @@ class CartsController < ApplicationController
     end
   end
 
-
+ 
   def destroy
     cart = Cart.find(params[:id])
     
