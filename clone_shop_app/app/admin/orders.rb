@@ -10,7 +10,7 @@ ActiveAdmin.register Order do
   filter :phone
   filter :post_code
   filter :address
-  filter :email
+  filter :email 
   filter :user_email_cont, label: "사용자 이메일로 검색"
   filter :packs_product_name_cont, label: "팩의 이름으로 검색"
 
