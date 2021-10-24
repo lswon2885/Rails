@@ -99,7 +99,7 @@ ActiveAdmin.register Order do
           row :imp_uid
           row :merchant_uid
           row :link do |payment|
-            a "iamport 대시보드 이동하기입니다.", href: payment.response["receipt_url"], target: "_blank"
+            a "iamport 대시보드 이동하기입니다!.", href: payment.response["receipt_url"], target: "_blank"
           end
         end
       end
