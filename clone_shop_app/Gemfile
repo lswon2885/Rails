@@ -17,7 +17,7 @@ gem 'iamport'
 
 gem 'rails-erd', group: :development
 
-gem "autoprefixer-rails"
+gem "mini_racer"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 5.2.3"
